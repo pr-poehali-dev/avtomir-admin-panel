@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import StatsCard from "@/components/admin/StatsCard";
 import CarsTable from "@/components/admin/CarsTable";
 import OrdersTable from "@/components/admin/OrdersTable";
+import CarFormModal from "@/components/admin/CarFormModal";
 import { mockCars, mockOrders } from "@/data/mockData";
 import { Car, Order } from "@/types";
 import { Car as CarIcon, ShoppingCart, Plus, TrendingUp } from "lucide-react";
@@ -25,6 +26,46 @@ const AdminPanel = () => {
 
   const handleDeleteOrder = (orderId: string) => {
     setOrders((prev) => prev.filter((order) => order.id !== orderId));
+  };
+
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    setOrders((prev) =>
+      prev.map((order) =>
+        order.id === orderId ? { ...order, status: newStatus } : order,
+      ),
+    );
+  };
+
+  const handleSaveCar = (carData: Omit<Car, "id" | "createdAt">) => {
+    if (editingCar) {
+      setCars((prev) =>
+        prev.map((car) =>
+          car.id === editingCar.id ? { ...car, ...carData } : car,
+        ),
+      );
+    } else {
+      const newCar: Car = {
+        ...carData,
+        id: Date.now().toString(),
+        createdAt: new Date(),
+      };
+      setCars((prev) => [newCar, ...prev]);
+    }
+    setEditingCar(null);
+    setIsCarFormOpen(false);
+  };
+
+  const [editingCar, setEditingCar] = useState<Car | null>(null);
+  const [isCarFormOpen, setIsCarFormOpen] = useState(false);
+
+  const handleEditCar = (car: Car) => {
+    setEditingCar(car);
+    setIsCarFormOpen(true);
+  };
+
+  const handleAddCar = () => {
+    setEditingCar(null);
+    setIsCarFormOpen(true);
   };
 
   const getOrdersStats = () => {
@@ -168,7 +209,10 @@ const AdminPanel = () => {
                   Всего автомобилей: {cars.length}
                 </p>
               </div>
-              <Button className="flex items-center gap-2">
+              <Button
+                className="flex items-center gap-2"
+                onClick={handleAddCar}
+              >
                 <Plus className="h-4 w-4" />
                 Добавить автомобиль
               </Button>
@@ -195,9 +239,20 @@ const AdminPanel = () => {
               orders={orders}
               cars={cars}
               onDelete={handleDeleteOrder}
+              onStatusChange={handleStatusChange}
             />
           </TabsContent>
         </Tabs>
+
+        <CarFormModal
+          car={editingCar}
+          isOpen={isCarFormOpen}
+          onClose={() => {
+            setIsCarFormOpen(false);
+            setEditingCar(null);
+          }}
+          onSave={handleSaveCar}
+        />
       </div>
     </div>
   );
