@@ -19,10 +19,6 @@ const AdminPanel = () => {
     setCars((prev) => prev.filter((car) => car.id !== carId));
   };
 
-  const handleDeleteCar = (carId: string) => {
-    setCars((prev) => prev.filter((car) => car.id !== carId));
-  };
-
   const handleDeleteOrder = (orderId: string) => {
     setOrders((prev) => prev.filter((order) => order.id !== orderId));
   };
