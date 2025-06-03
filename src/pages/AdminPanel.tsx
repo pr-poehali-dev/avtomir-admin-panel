@@ -19,9 +19,8 @@ const AdminPanel = () => {
     setCars((prev) => prev.filter((car) => car.id !== carId));
   };
 
-  const handleEditCar = (car: Car) => {
-    // TODO: Implement edit functionality
-    console.log("Edit car:", car);
+  const handleDeleteCar = (carId: string) => {
+    setCars((prev) => prev.filter((car) => car.id !== carId));
   };
 
   const handleDeleteOrder = (orderId: string) => {
